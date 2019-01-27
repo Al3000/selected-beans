@@ -16,14 +16,17 @@ import static org.junit.Assert.assertSame;
 @RunWith(SpringRunner.class)
 public class SelectionTest {
 
-    @Autowired
-    @Administrator
-    List<Function<?, ?>> adminBeans;
+
+    @Autowired @Administrator List<Function<?, ?>> adminBeans;
 
     @Autowired
     @Administrator
     @OnRequestReceived
     List<Function<?, ?>> mixedAdminAndRequestListenerBeans;
+
+    @Autowired @Administrator @User List<Function<?, ?>> multiRoleBeans;
+
+    @Autowired @Administrator @User @OnBeforeResponseSent List<Function<?, ?>> multiRoleSingleFuncBeans;
 
 
     @Test
@@ -32,16 +35,34 @@ public class SelectionTest {
         for (Function<?, ?> f : adminBeans) {
             System.out.printf("testAdminAnnotation() - %s\n", f.getClass().getSimpleName());
         }
-        assertSame(adminBeans.size(), 2);
+        assertSame(4, adminBeans.size());
     }
 
 
     @Test
     public void testAdminRequestAnnotationsMix() {
         assertNotNull(mixedAdminAndRequestListenerBeans);
-        assertSame(mixedAdminAndRequestListenerBeans.size(), 1);
+        assertSame(1, mixedAdminAndRequestListenerBeans.size());
         for (Function<?, ?> f : mixedAdminAndRequestListenerBeans) {
             System.out.printf("testAdminRequestAnnotationsMix() - %s\n", f.getClass().getSimpleName());
+        }
+    }
+
+    @Test
+    public void testMultiRole() {
+        assertNotNull(multiRoleBeans);
+        assertSame(2, multiRoleBeans.size());
+        for (Function<?, ?> f : multiRoleBeans) {
+            System.out.printf("testMultiRole() - %s\n", f.getClass().getSimpleName());
+        }
+    }
+
+    @Test
+    public void testMultiRoleSingleFunction() {
+        assertNotNull(multiRoleSingleFuncBeans);
+        assertSame(1, multiRoleSingleFuncBeans.size());
+        for (Function<?, ?> f : multiRoleSingleFuncBeans) {
+            System.out.printf("multiRoleSingleFuncBeans() - %s\n", f.getClass().getSimpleName());
         }
     }
 }
