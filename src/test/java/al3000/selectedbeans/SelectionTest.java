@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
-import java.util.function.Function;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
@@ -17,52 +16,44 @@ import static org.junit.Assert.assertSame;
 public class SelectionTest {
 
 
-    @Autowired @Administrator List<Function<?, ?>> adminBeans;
+    @Autowired
+    @Qualifier1
+    List<Object> qualifier1Beans;
 
     @Autowired
-    @Administrator
-    @OnRequestReceived
-    List<Function<?, ?>> mixedAdminAndRequestListenerBeans;
+    @Qualifier2
+    List<Object> qualifier2Beans;
 
-    @Autowired @Administrator @User List<Function<?, ?>> multiRoleBeans;
-
-    @Autowired @Administrator @User @OnBeforeResponseSent List<Function<?, ?>> multiRoleSingleFuncBeans;
-
+    @Autowired
+    @Qualifier1
+    @Qualifier2
+    List<Object> multiQualifierBeans;
 
     @Test
-    public void testAdminAnnotation() {
-        assertNotNull(adminBeans);
-        for (Function<?, ?> f : adminBeans) {
-            System.out.printf("testAdminAnnotation() - %s\n", f.getClass().getSimpleName());
+    public void shouldSelectAllQualifier1Beans() {
+        assertNotNull(qualifier1Beans);
+        log("shouldSelectAllQualifier1Beans()", qualifier1Beans);
+        assertSame(2, qualifier1Beans.size());
+    }
+
+    static void log(String logPrefix, List<?> list) {
+        for (Object o: list) {
+            System.out.printf("%s - %s\n", logPrefix, o.getClass().getSimpleName());
         }
-        assertSame(4, adminBeans.size());
     }
 
 
     @Test
-    public void testAdminRequestAnnotationsMix() {
-        assertNotNull(mixedAdminAndRequestListenerBeans);
-        assertSame(1, mixedAdminAndRequestListenerBeans.size());
-        for (Function<?, ?> f : mixedAdminAndRequestListenerBeans) {
-            System.out.printf("testAdminRequestAnnotationsMix() - %s\n", f.getClass().getSimpleName());
-        }
+    public void shouldSelectAllQualifier2Beans() {
+        assertNotNull(qualifier2Beans);
+        log("shouldSelectAllQualifier2Beans()", qualifier2Beans);
+        assertSame(4, qualifier2Beans.size());
     }
 
     @Test
-    public void testMultiRole() {
-        assertNotNull(multiRoleBeans);
-        assertSame(2, multiRoleBeans.size());
-        for (Function<?, ?> f : multiRoleBeans) {
-            System.out.printf("testMultiRole() - %s\n", f.getClass().getSimpleName());
-        }
-    }
-
-    @Test
-    public void testMultiRoleSingleFunction() {
-        assertNotNull(multiRoleSingleFuncBeans);
-        assertSame(1, multiRoleSingleFuncBeans.size());
-        for (Function<?, ?> f : multiRoleSingleFuncBeans) {
-            System.out.printf("multiRoleSingleFuncBeans() - %s\n", f.getClass().getSimpleName());
-        }
+    public void shouldSelectMultiQualifierBeans() {
+        assertNotNull(multiQualifierBeans);
+        log("shouldSelectMultiQualifierBeans()", multiQualifierBeans);
+        assertSame(1, multiQualifierBeans.size());
     }
 }

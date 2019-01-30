@@ -1,4 +1,4 @@
 package al3000.selectedbeans;
 
-public class RequestModel {
+public class ResponseModel {
 }
